@@ -16,7 +16,7 @@ To use it in your code, you need to first include the `wp-http-testcase.php` fil
 your PHPUnit bootstrap file.
 
 Then, in your tests that involve `WP_Http`, you need to extend `WP_HTTP_UnitTestCase`
-instead of `WP_HTTP_UnitTestCase` as you normally would.
+instead of `WP_UnitTestCase` as you normally would.
 
 Before calling the code that will invoke the HTTP request, you need to set the
 function to mock the responses like so:
