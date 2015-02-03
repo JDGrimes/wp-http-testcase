@@ -1,0 +1,42 @@
+# Travis CI configuration file.
+
+language: php
+
+# 5.3 runs first so that we can fail fast for PHPCS issues.
+php:
+    - 5.3
+    - 5.2
+    - 5.4
+    - 5.5
+    - 5.6
+
+sudo: false
+
+matrix:
+   fast_finish: true
+
+before_install:
+    - >
+      if [[ $TRAVIS_PHP_VERSION == 5.3 ]]; then
+        # Install PHPCS.
+        mkdir -p /tmp/phpcs
+        curl -L "https://github.com/quizlabs/PHP_CodeSniffer/archive/master.tar.gz" \
+          | tar xvz --strip-components=1 -C /tmp/phpcs
+  
+        # Install WordPress Coding Standards for PHPCS.
+        mkdir -p /tmp/wpcs
+        curl -L "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/develop.tar.gz" \
+          | tar xvz --strip-components=1 -C /tmp/wpcs
+        /tmp/phpcs/scripts/phpcs --config-set installed_paths /tmp/wpcs
+      fi
+
+script:
+    - find . -name '*.php' -exec php -lf {} \;
+    - > 
+      if [[ $TRAVIS_PHP_VERSION == 5.3 ]]; then
+        /tmp/phpcs/scripts/phpcs -ns --standard=WordPress $(find . -name '*.php')
+      else
+        echo 'Not running PHPCS.'
+      fi
+
+# EOF
