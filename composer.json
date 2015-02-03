@@ -1,0 +1,17 @@
+{
+    "name": "jdgrimes/wp-http-testcase",
+    "description": "PHPUnit testcase for WordPress code involving HTTP requests",
+    "homepage": "https://github.com/JDGrimes/wp-http-testcase",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "J.D. Grimes",
+            "email": "jdg@codesymphony.co",
+            "homepage": "http://codesymphony.co",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    }
+}
