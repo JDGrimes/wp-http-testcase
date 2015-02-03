@@ -99,14 +99,15 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function setUp() {
 
-		 parent::setUp();
+		parent::setUp();
 
-		 $this->http_requests = array();
+		$this->http_requests = array();
+
 		if ( ! empty( self::$host ) ) {
 			$this->http_responder = array( $this, 'route_request' );
 		}
 
-		 add_filter( 'pre_http_request', array( $this, 'http_request_listner' ), 10, 3 );
+		add_filter( 'pre_http_request', array( $this, 'http_request_listner' ), 10, 3 );
 	}
 
 	/**
