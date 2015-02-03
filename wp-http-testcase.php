@@ -20,7 +20,7 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 	 * Each of the requests has the following keys:
 	 * {
 	 *    @type string $url     The URL for the request.
-	 *    @type array  $request The request arguements.
+	 *    @type array  $request The request arguments.
 	 * }
 	 *
 	 * @since 1.0.0
@@ -113,7 +113,7 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Clean up the filters after each test.
 	 *
-	 * @sicne 1.0.0
+	 * @since 1.0.0
 	 */
 	public function tearDown() {
 
