@@ -39,6 +39,60 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 	protected $http_responder;
 
 	/**
+	 * The local host to route requests to in 'local' mode.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	protected static $host;
+
+	/**
+	 * Whether to use caching.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var bool
+	 */
+	protected static $use_caching;
+
+	/**
+	 * The directory the cache files are in.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	protected static $cache_dir;
+
+	/**
+	 * The cache group to use.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	protected static $cache_group;
+
+	/**
+	 * The currently loaded cache.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var array
+	 */
+	protected static $cache;
+
+	/**
+	 * Whether the cache has changed.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var bool
+	 */
+	protected static $cache_changed;
+
+	/**
 	 * Set up for each test.
 	 *
 	 * @since 1.0.0
@@ -48,7 +102,9 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 		 parent::setUp();
 
 		 $this->http_requests = array();
-		 $this->http_responder = false;
+		if ( ! empty( self::$host ) ) {
+			$this->http_responder = array( $this, 'route_request' );
+		}
 
 		 add_filter( 'pre_http_request', array( $this, 'http_request_listner' ), 10, 3 );
 	}
@@ -91,6 +147,197 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 		}
 
 		return $preempt;
+	}
+
+	/**
+	 * Route a request through to a predefined host, with optional caching.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array  $request The request to route.
+	 * @param string $url     The URL the request is for.
+	 *
+	 * @return array|bool|false|WP_Error The response.
+	 */
+	protected function route_request( $request, $url ) {
+
+		// Get the URL host.
+		$host = parse_url( $url, PHP_URL_HOST );
+
+		// If the host is already correct, return false so the request continues.
+		if ( $host === self::$host ) {
+			return false;
+		}
+
+		$url = str_replace( $host, self::$host, $url );
+
+		$cache_key = $this->get_cache_key( $request, $url );
+		$cached = $this->get_cached_response( $cache_key );
+
+		if ( $cached ) {
+			return $cached;
+		}
+
+		$response = wp_remote_request( $url, $request );
+
+		$this->cache_response( $cache_key, $response );
+
+		return $response;
+	}
+
+	/**
+	 * Get the cache key for a request.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $request The request.
+	 * @param string $url The URL the request is for.
+	 *
+	 * @return string|false The cache key for the request. False if not caching.
+	 */
+	protected function get_cache_key( $request, $url ) {
+
+		if ( ! self::$use_caching ) {
+			return false;
+		}
+
+		return md5( serialize( $request ) . $url );
+	}
+
+	/**
+	 * Get the cached response to a request.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $cache_key The cache key for the request.
+	 *
+	 * @return array|false The cached response, or false if none.
+	 */
+	protected function get_cached_response( $cache_key ) {
+
+		if ( ! self::$use_caching ) {
+			return false;
+		}
+
+		if ( ! isset( self::$cache[ $cache_key ] ) ) {
+			return false;
+		}
+
+		return self::$cache[ $cache_key ];
+	}
+
+	/**
+	 * Save a response to the cache.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $cache_key The cache key for the request.
+	 * @param array  $response  The response.
+	 */
+	protected function cache_response( $cache_key, $response ) {
+
+		if ( ! self::$use_caching ) {
+			return;
+		}
+
+		self::$cache[ $cache_key ] = $response;
+		self::$cache_changed = true;
+	}
+
+	//
+	// Static Functions.
+	//
+
+	/**
+	 * Initialize the class.
+	 *
+	 * @since 1.1.0
+	 */
+	public static function init() {
+
+		self::$host = self::get_env( 'HOST' );
+
+		self::load_cache();
+	}
+
+	/**
+	 * Get an environment setting.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $var The name of the settings to get.
+	 *
+	 * @return mixed|null|string
+	 */
+	protected static function get_env( $var ) {
+
+		$value = getenv( 'WP_HTTP_TC_' . $var );
+
+		if ( $value ) {
+			return $value;
+		}
+
+		if ( ! defined( 'WP_HTTP_TC_' . $var ) ) {
+			return null;
+		}
+
+		return constant( 'WP_HTTP_TC_' . $var );
+	}
+
+	/**
+	 * Load the cache if caching is in use.
+	 *
+	 * @since 1.1.0
+	 */
+	protected static function load_cache() {
+
+		self::$use_caching = (bool) self::get_env( 'USE_CACHING' );
+
+		if ( ! self::$use_caching ) {
+			return;
+		}
+
+		// Save the cache after the tests have run.
+		add_action( 'shutdown', array( __CLASS__, 'save_cache' ) );
+
+		self::$cache_group = self::get_env( 'CACHE_GROUP' );
+
+		if ( ! self::$cache_group ) {
+			self::$cache_group = 'default';
+		}
+
+		self::$cache_dir = self::get_env( 'CACHE_DIR' );
+
+		if ( ! self::$cache_dir ) {
+			self::$cache_dir = dirname( __FILE__ );
+		}
+
+		$cache_file = self::$cache_dir . '/' . self::$cache_group;
+
+		if ( ! file_exists( $cache_file ) ) {
+			return;
+		}
+
+		$cache = file_get_contents( $cache_file );
+
+		self::$cache = unserialize( $cache );
+	}
+
+	/**
+	 * Save the cache.
+	 *
+	 * @since 1.1.0
+	 */
+	public static function save_cache() {
+
+		if ( ! self::$cache_changed ) {
+			return;
+		}
+
+		file_put_contents(
+			self::$cache_dir . '/' . self::$cache_group
+			, serialize( self::$cache )
+		);
 	}
 }
 
