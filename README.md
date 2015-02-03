@@ -9,6 +9,14 @@ reachable from your testing environment. This testcase solves this by letting yo
 route your requests to a different different host address, use a cached set of
 responses, or just mock the remote responses by supplying artificial ones.
 
+# Installation
+
+You can install this package using composer:
+
+```bash
+composer require --dev jdgrimes/wp-http-testcase:~1.1
+```
+
 # Usage
 
 To use it in your code, you need to first include the `wp-http-testcase.php` file in
