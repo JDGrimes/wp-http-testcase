@@ -93,6 +93,18 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	protected static $cache_changed;
 
 	/**
+	 * Whether to skip just the next cache hit and put the request through.
+	 *
+	 * When true, the cache won't be checked for the next request, but the response
+	 * will still overwrite the existing cache.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @var bool
+	 */
+	protected $skip_cache_next = false;
+
+	/**
 	 * Set up for each test.
 	 *
 	 * @since 1.0.0
@@ -120,6 +132,8 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		parent::tearDown();
 
 		remove_filter( 'pre_http_request', array( $this, 'http_request_listner' ) );
+
+		$this->skip_cache_next = false;
 	}
 
 	//
@@ -217,6 +231,12 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	protected function get_cached_response( $cache_key ) {
 
 		if ( ! self::$use_caching ) {
+			return false;
+		}
+
+		// If we're to skip the cache this time, return false.
+		if ( $this->skip_cache_next ) {
+			$this->skip_cache_next = false;
 			return false;
 		}
 
