@@ -3,15 +3,13 @@ WP HTTP Testcase
 
 PHPUnit testcase for testing code that uses WordPress's `WP_Http` class.
 
-# Usage
-
-## Mocking Responses
-
 If you use `wp_remote_request()` or other wrappers for `WP_Http` methods in your
 code, this makes it difficult to test, especially if the remote server may not be
 reachable from your testing environment. This testcase solves this by letting you
 route your requests to a different different host address, use a cached set of
 responses, or just mock the remote responses by supplying artificial ones.
+
+# Usage
 
 To use it in your code, you need to first include the `wp-http-testcase.php` file in
 your PHPUnit bootstrap file. If you will be using the host routing and response
@@ -20,6 +18,8 @@ bootstrap file.
 
 Then, in your tests that involve `WP_Http`, you need to extend `WP_HTTP_TestCase`
 instead of `WP_UnitTestCase` as you normally would.
+
+## Mocking Responses
 
 ### Using Response Caching
 
