@@ -12,7 +12,7 @@
  *
  * @since 1.0.0
  */
-abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
+abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 
 	/**
 	 * The HTTP requests caught.
@@ -340,6 +340,10 @@ abstract class WP_HTTP_UnitTestCase extends WP_UnitTestCase {
 			, serialize( self::$cache )
 		);
 	}
+}
+
+if ( ! defined( 'WP_HTTP_TC_NO_BACKPAT') ) {
+	abstract class WP_HTTP_UnitTestCase extends WP_HTTP_TestCase {}
 }
 
 // EOF

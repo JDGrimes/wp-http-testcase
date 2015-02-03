@@ -15,11 +15,11 @@ responses, or just mock the remote responses by supplying artificial ones.
 
 To use it in your code, you need to first include the `wp-http-testcase.php` file in
 your PHPUnit bootstrap file. If you will be using the host routing and response
-caching features, you will need to call `WP_HTTP_UnitTestCase::init()` in your
+caching features, you will need to call `WP_HTTP_TestCase::init()` in your
 bootstrap file.
 
-Then, in your tests that involve `WP_Http`, you need to extend `WP_HTTP_UnitTestCase`
-instead of `WP_HTTP_UnitTestCase` as you normally would.
+Then, in your tests that involve `WP_Http`, you need to extend `WP_HTTP_TestCase`
+instead of `WP_HTTP_TestCase` as you normally would.
 
 ### Using Response Caching
 
