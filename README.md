@@ -19,7 +19,7 @@ caching features, you will need to call `WP_HTTP_TestCase::init()` in your
 bootstrap file.
 
 Then, in your tests that involve `WP_Http`, you need to extend `WP_HTTP_TestCase`
-instead of `WP_HTTP_TestCase` as you normally would.
+instead of `WP_UnitTestCase` as you normally would.
 
 ### Using Response Caching
 
