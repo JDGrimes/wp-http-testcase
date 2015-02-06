@@ -34,7 +34,7 @@ script:
     - find . -name '*.php' -exec php -lf {} \;
     - > 
       if [[ $TRAVIS_PHP_VERSION == 5.3 ]]; then
-        /tmp/phpcs/scripts/phpcs -ns --standard=WordPress $(find . -name '*.php')
+        /tmp/phpcs/scripts/phpcs -ns --standard=WordPress-Extra $(find . -name '*.php')
       else
         echo 'Not running PHPCS.'
       fi

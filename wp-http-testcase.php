@@ -401,7 +401,7 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	}
 }
 
-if ( ! defined( 'WP_HTTP_TC_NO_BACKPAT') ) {
+if ( ! defined( 'WP_HTTP_TC_NO_BACKPAT' ) ) {
 	abstract class WP_HTTP_UnitTestCase extends WP_HTTP_TestCase {}
 }
 
