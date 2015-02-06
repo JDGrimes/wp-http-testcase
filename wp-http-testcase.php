@@ -57,6 +57,24 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	protected static $use_caching = true;
 
 	/**
+	 * Whether to ignore the request 'user-agent' when caching responses.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @var bool
+	 */
+	protected static $cache_ignore_user_agent = true;
+
+	/**
+	 * Whether to ignore the request 'sslcertificates' when caching responses.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @var bool
+	 */
+	protected static $cache_ignore_sslcertificates = true;
+
+	/**
 	 * The directory the cache files are in.
 	 *
 	 * @since 1.1.0
@@ -216,6 +234,14 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 			return false;
 		}
 
+		if ( self::$cache_ignore_user_agent ) {
+			unset( $request['user-agent'] );
+		}
+
+		if ( self::$cache_ignore_sslcertificates ) {
+			unset( $request['sslcertificates'] );
+		}
+
 		return md5( serialize( $request ) . $url );
 	}
 
@@ -340,6 +366,8 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		// Save the cache after the tests have run.
 		add_action( 'shutdown', array( __CLASS__, 'save_cache' ) );
 
+		self::load_env( 'CACHE_IGNORE_USER_AGENT', true );
+		self::load_env( 'CACHE_IGNORE_SSLCERTIFICATES', true );
 		self::load_env( 'CACHE_GROUP' );
 
 		self::$cache_dir = self::get_env( 'CACHE_DIR', dirname( __FILE__ ) );
