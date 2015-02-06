@@ -348,7 +348,7 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		self::$$property = self::get_env( $var, self::$$property );
 
 		if ( $is_bool ) {
-			boolval( self::$$property );
+			self::$$property = (bool) self::$$property;
 		}
 	}
 
