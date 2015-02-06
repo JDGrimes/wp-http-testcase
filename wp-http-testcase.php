@@ -54,7 +54,7 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 *
 	 * @var bool
 	 */
-	protected static $use_caching;
+	protected static $use_caching = true;
 
 	/**
 	 * The directory the cache files are in.
@@ -72,7 +72,7 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 *
 	 * @var string
 	 */
-	protected static $cache_group;
+	protected static $cache_group = 'default';
 
 	/**
 	 * The currently loaded cache.
@@ -276,7 +276,8 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 */
 	public static function init() {
 
-		self::$host = self::get_env( 'HOST' );
+		self::load_env( 'HOST' );
+		self::load_env( 'USE_CACHING', true );
 
 		self::load_cache();
 	}
@@ -286,23 +287,43 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param string $var The name of the settings to get.
+	 * @param string $var     The name of the setting to get.
+	 * @param mixed  $default The default value for this setting.
 	 *
 	 * @return mixed|null|string
 	 */
-	protected static function get_env( $var ) {
+	protected static function get_env( $var, $default = null ) {
 
 		$value = getenv( 'WP_HTTP_TC_' . $var );
 
-		if ( $value ) {
+		if ( false !== $value ) {
 			return $value;
 		}
 
 		if ( ! defined( 'WP_HTTP_TC_' . $var ) ) {
-			return null;
+			return $default;
 		}
 
 		return constant( 'WP_HTTP_TC_' . $var );
+	}
+
+	/**
+	 * Get an environment setting and assign it to the corresponding property.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string $var     The var name.
+	 * @param bool   $is_bool Whether this is a boolean property.
+	 */
+	protected static function load_env( $var, $is_bool = false ) {
+
+		$property = strtolower( $var );
+
+		self::$$property = self::get_env( $var, self::$$property );
+
+		if ( $is_bool ) {
+			boolval( self::$$property );
+		}
 	}
 
 	/**
@@ -312,8 +333,6 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 */
 	protected static function load_cache() {
 
-		self::$use_caching = (bool) self::get_env( 'USE_CACHING' );
-
 		if ( ! self::$use_caching ) {
 			return;
 		}
@@ -321,17 +340,9 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		// Save the cache after the tests have run.
 		add_action( 'shutdown', array( __CLASS__, 'save_cache' ) );
 
-		self::$cache_group = self::get_env( 'CACHE_GROUP' );
+		self::load_env( 'CACHE_GROUP' );
 
-		if ( ! self::$cache_group ) {
-			self::$cache_group = 'default';
-		}
-
-		self::$cache_dir = self::get_env( 'CACHE_DIR' );
-
-		if ( ! self::$cache_dir ) {
-			self::$cache_dir = dirname( __FILE__ );
-		}
+		self::$cache_dir = self::get_env( 'CACHE_DIR', dirname( __FILE__ ) );
 
 		$cache_file = self::$cache_dir . '/' . self::$cache_group;
 
