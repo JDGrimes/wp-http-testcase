@@ -57,22 +57,20 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	protected static $use_caching = true;
 
 	/**
-	 * Whether to ignore the request 'user-agent' when caching responses.
+	 * The request fields to use when generating the cache key.
 	 *
-	 * @since 1.2.0
+	 * Only the keys are used. The values are meaningless and are completely ignored.
 	 *
-	 * @var bool
+	 * @since 1.3.0
+	 *
+	 * @var array
 	 */
-	protected static $cache_ignore_user_agent = true;
-
-	/**
-	 * Whether to ignore the request 'sslcertificates' when caching responses.
-	 *
-	 * @since 1.2.0
-	 *
-	 * @var bool
-	 */
-	protected static $cache_ignore_sslcertificates = true;
+	protected static $cache_request_fields = array(
+		'method'  => 1,
+		'headers' => 1,
+		'cookies' => 1,
+		'body'    => 1,
+	);
 
 	/**
 	 * The directory the cache files are in.
@@ -234,13 +232,7 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 			return false;
 		}
 
-		if ( self::$cache_ignore_user_agent ) {
-			unset( $request['user-agent'] );
-		}
-
-		if ( self::$cache_ignore_sslcertificates ) {
-			unset( $request['sslcertificates'] );
-		}
+		$request = array_intersect_key( $request, self::$cache_request_fields );
 
 		return md5( serialize( $request ) . $url );
 	}
@@ -366,8 +358,14 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		// Save the cache after the tests have run.
 		add_action( 'shutdown', array( __CLASS__, 'save_cache' ) );
 
-		self::load_env( 'CACHE_IGNORE_USER_AGENT', true );
-		self::load_env( 'CACHE_IGNORE_SSLCERTIFICATES', true );
+		$request_fields = self::get_env( 'CACHE_REQUEST_FIELDS' );
+
+		if ( null !== $request_fields ) {
+			self::$cache_request_fields = array_flip(
+				array_map( 'trim', explode( ',', $request_fields ) )
+			);
+		}
+
 		self::load_env( 'CACHE_GROUP' );
 
 		self::$cache_dir = self::get_env( 'CACHE_DIR', dirname( __FILE__ ) );
