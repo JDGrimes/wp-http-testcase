@@ -2,10 +2,8 @@
 
 language: php
 
-# 5.3 runs first so that we can fail fast for PHPCS issues.
 php:
     - 5.3
-    - 5.2
     - 5.4
     - 5.5
     - 5.6
