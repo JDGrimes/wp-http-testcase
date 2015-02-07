@@ -202,14 +202,14 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 			return false;
 		}
 
-		$url = str_replace( $host, self::$host, $url );
-
 		$cache_key = $this->get_cache_key( $request, $url );
 		$cached = $this->get_cached_response( $cache_key );
 
 		if ( $cached ) {
 			return $cached;
 		}
+
+		$url = str_replace( $host, self::$host, $url );
 
 		$response = wp_remote_request( $url, $request );
 
