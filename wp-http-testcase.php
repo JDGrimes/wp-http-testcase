@@ -192,19 +192,20 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 */
 	protected function route_request( $request, $url ) {
 
+		// Check the cache.
+		$cache_key = $this->get_cache_key( $request, $url );
+		$cached = $this->get_cached_response( $cache_key );
+
+		if ( $cached ) {
+			return $cached;
+		}
+
 		// Get the URL host.
 		$host = parse_url( $url, PHP_URL_HOST );
 
 		// If the host is already correct, return false so the request continues.
 		if ( $host === self::$host ) {
 			return false;
-		}
-
-		$cache_key = $this->get_cache_key( $request, $url );
-		$cached = $this->get_cached_response( $cache_key );
-
-		if ( $cached ) {
-			return $cached;
 		}
 
 		$url = str_replace( $host, self::$host, $url );
