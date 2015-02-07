@@ -294,7 +294,7 @@ var_dump( $url, $request, serialize( $request ), md5( serialize( $request ) . $u
 	 * @since 1.1.0
 	 */
 	public static function init() {
-var_dump( __METHOD__ );
+
 		self::load_env( 'HOST' );
 		self::load_env( 'USE_CACHING', true );
 
@@ -351,7 +351,7 @@ var_dump( __METHOD__ );
 	 * @since 1.1.0
 	 */
 	protected static function load_cache() {
-var_dump(self::$use_caching);
+
 		if ( ! self::$use_caching ) {
 			return;
 		}
@@ -399,7 +399,7 @@ var_dump(self::$use_caching);
 		);
 	}
 }
-var_dump(__FILE__);
+
 if ( ! defined( 'WP_HTTP_TC_NO_BACKPAT' ) ) {
 	abstract class WP_HTTP_UnitTestCase extends WP_HTTP_TestCase {}
 }
