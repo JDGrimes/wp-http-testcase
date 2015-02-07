@@ -233,7 +233,7 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		}
 
 		$request = array_intersect_key( $request, self::$cache_request_fields );
-
+var_dump( $url, $request, serialize( $request ), md5( serialize( $request ) . $url ) );
 		return md5( serialize( $request ) . $url );
 	}
 
