@@ -6,7 +6,7 @@ PHPUnit testcase for testing code that uses WordPress's `WP_Http` class.
 If you use `wp_remote_request()` or other wrappers for `WP_Http` methods in your
 code, this makes it difficult to test, especially if the remote server may not be
 reachable from your testing environment. This testcase solves this by letting you
-route your requests to a different different host address, use a cached set of
+route your requests to a different host address, use a cached set of
 responses, or just mock the remote responses by supplying artificial ones.
 
 # Installation
