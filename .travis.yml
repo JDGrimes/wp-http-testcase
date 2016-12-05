@@ -2,8 +2,10 @@
 
 language: php
 
+# PHP 5.3 runs first for WPCS.
 php:
     - 5.3
+    - 5.2
     - 5.4
     - 5.5
     - 5.6
