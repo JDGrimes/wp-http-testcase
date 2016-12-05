@@ -20,8 +20,9 @@ composer require --dev jdgrimes/wp-http-testcase
 # Usage
 
 To use it in your code, you need to first include the `wp-http-testcase.php` file in
-your PHPUnit bootstrap file. If you will be using the host routing and response
-caching features, you will need to call `WP_HTTP_TestCase::init()` in your
+your PHPUnit bootstrap file. (Or, to take advantage of Composer's autoloading, you 
+can just include `vendor/autoload.php`.) If you will be using the host routing and
+response caching features, you will need to call `WP_HTTP_TestCase::init()` in your
 bootstrap file.
 
 Then, in your tests that involve `WP_Http`, you need to extend `WP_HTTP_TestCase`
