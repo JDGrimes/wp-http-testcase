@@ -14,7 +14,7 @@ responses, or just mock the remote responses by supplying artificial ones.
 You can install this package using composer:
 
 ```bash
-composer require --dev jdgrimes/wp-http-testcase:~1.1
+composer require --dev jdgrimes/wp-http-testcase
 ```
 
 # Usage
