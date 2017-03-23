@@ -39,6 +39,15 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	protected $http_responder;
 
 	/**
+	 * Whether the class has been initialized.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @var bool
+	 */
+	protected static $did_init = false;
+
+	/**
 	 * The local host to route requests to in 'local' mode.
 	 *
 	 * @since 1.1.0
@@ -119,6 +128,18 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 * @var bool
 	 */
 	protected $skip_cache_next = false;
+
+	/**
+	 * @since 1.3.0
+	 */
+	public static function setUpBeforeClass() {
+
+		if ( ! self::$did_init ) {
+			self::init();
+		}
+
+		parent::setUpBeforeClass();
+	}
 
 	/**
 	 * Set up for each test.
@@ -299,6 +320,8 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		self::load_env( 'USE_CACHING', true );
 
 		self::load_cache();
+
+		self::$did_init = true;
 	}
 
 	/**
