@@ -142,6 +142,16 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @since 1.3.1
+	 */
+	public static function tearDownAfterClass() {
+
+		self::save_cache();
+
+		parent::tearDownAfterClass();
+	}
+
+	/**
 	 * Set up for each test.
 	 *
 	 * @since 1.0.0
@@ -378,9 +388,6 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 		if ( ! self::$use_caching ) {
 			return;
 		}
-
-		// Save the cache after the tests have run.
-		add_action( 'shutdown', array( __CLASS__, 'save_cache' ) );
 
 		$request_fields = self::get_env( 'CACHE_REQUEST_FIELDS' );
 
