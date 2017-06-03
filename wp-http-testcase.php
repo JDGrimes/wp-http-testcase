@@ -202,7 +202,10 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 	 */
 	public function http_request_listner( $preempt, $request, $url ) {
 
-		$this->http_requests[] = array( 'url' => $url, 'request' => $request );
+		$this->http_requests[] = array(
+			'url' => $url,
+			'request' => $request,
+		);
 
 		if ( $this->http_responder ) {
 			$preempt = call_user_func( $this->http_responder, $request, $url );
@@ -371,10 +374,10 @@ abstract class WP_HTTP_TestCase extends WP_UnitTestCase {
 
 		$property = strtolower( $var );
 
-		self::$$property = self::get_env( $var, self::$$property );
+		self::${$property} = self::get_env( $var, self::${$property} );
 
 		if ( $is_bool ) {
-			self::$$property = (bool) self::$$property;
+			self::${$property} = (bool) self::${$property};
 		}
 	}
 
