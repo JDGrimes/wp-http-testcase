@@ -22,7 +22,7 @@ before_install:
       if [[ $TRAVIS_PHP_VERSION == 5.3 ]]; then
         # Install PHPCS.
         mkdir -p /tmp/phpcs
-        curl -L "https://github.com/squizlabs/PHP_CodeSniffer/archive/master.tar.gz" \
+        curl -L "https://github.com/squizlabs/PHP_CodeSniffer/archive/2.9.tar.gz" \
           | tar xvz --strip-components=1 -C /tmp/phpcs
   
         # Install WordPress Coding Standards for PHPCS.
