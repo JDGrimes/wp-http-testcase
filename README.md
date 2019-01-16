@@ -107,8 +107,7 @@ protected function mock_server_response( $request, $url ) {
 ```
 
 For a full list of the `$request` and response arguments, see
-[`WP_Http::request()`](http://developer.wordpress.org/reference/classes/wp_http/
-request/#source-code)
+[`WP_Http::request()`](http://developer.wordpress.org/reference/classes/wp_http/request/#source-code)
 
 ## Testing Requests
 
