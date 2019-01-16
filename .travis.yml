@@ -4,8 +4,6 @@ language: php
 
 # PHP 5.3 runs first for WPCS.
 php:
-    - 5.3
-    - 5.2
     - 5.4
     - 5.5
     - 5.6
@@ -19,7 +17,7 @@ matrix:
 
 before_install:
     - >
-      if [[ $TRAVIS_PHP_VERSION == 5.3 ]]; then
+      if [[ $TRAVIS_PHP_VERSION == 5.4 ]]; then
         # Install PHPCS.
         mkdir -p /tmp/phpcs
         curl -L "https://github.com/squizlabs/PHP_CodeSniffer/archive/2.9.tar.gz" \
@@ -35,7 +33,7 @@ before_install:
 script:
     - find . -name '*.php' -exec php -lf {} \;
     - > 
-      if [[ $TRAVIS_PHP_VERSION == 5.3 ]]; then
+      if [[ $TRAVIS_PHP_VERSION == 5.4 ]]; then
         /tmp/phpcs/scripts/phpcs -ns --standard=WordPress-Extra $(find . -name '*.php')
       else
         echo 'Not running PHPCS.'
